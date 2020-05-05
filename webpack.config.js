@@ -48,7 +48,7 @@ module.exports = {
         [
             {
             from: 'css/*.css',
-            to: dist + '/css/'
+            to: dist
             }
         ],
         { copyUnmodified: true }
