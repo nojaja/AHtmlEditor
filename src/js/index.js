@@ -44,20 +44,53 @@ $("#edittab > li").on("click", function (event) {
 });
 
 function changeSrc(url, cb) {
+  $("#child-frame").attr("srcdoc", "");
+  //$("#child-frame").attr("src", "./blank.html");
+  var frame = document.getElementById("child-frame");
+  frame.onload = function(){};
+
+  if(!url){
+    var doc = localDraft();
+    if (doc){
+      data.source.model.setValue(localDraft());
+      //$("#child-frame").attr("src", "./blank.html");
+      return (cb)?cb():true;
+    }else{
+      url = $("#test5").attr("data-url");
+    }
+  }
   $.ajax({
     url: url,
     dataType: "html"
   }).done(function (d) {
     //editor.setValue(d);
     data.source.model.setValue(d);
-    $("#child-frame").attr("srcdoc","");
-    //$("#child-frame").attr("src", "./blank.html");
-    if (cb) return cb();
+      return (cb)? cb() : true;
   });
 }
 $(".samples").on("click", function (event) {
-  changeSrc($(this).attr("data-url"));
+  changeSrc($(this).attr("data-url"),function () {
+    $.UIkit.notify("load..", {status:'success',timeout : 1000});
+  });
 });
+
+
+function saveDraft(source) {
+  // ローカルストレージに最新の状態を保存
+
+  var name = 'draft'+location.pathname.replace(/\//g, '.');
+
+  localStorage.setItem(name, JSON.stringify(source));
+  console.log("draft:" + JSON.stringify(source));
+  $.UIkit.notify("save..", {status:'success',timeout : 1000});
+}
+function localDraft() {
+  // ページが読み込まれたら、ローカルストレージから状態を読み込む
+  var name = 'draft'+location.pathname.replace(/\//g, '.');
+  var source = JSON.parse(localStorage.getItem(name)) || null;
+  console.log("source:" + JSON.stringify(source));
+  return source;
+}
 
 var htmlparser = Tautologistics.NodeHtmlParser;
 
@@ -103,7 +136,7 @@ $(function () {
     automaticLayout: true,
     model: data.source.model
   });
-  var url = arg["q"] ? arg["q"] : $("#test5").attr("data-url");
+  var url = arg["q"] ? arg["q"] : "";
   changeSrc(url, function () {
     compile();
   });
@@ -118,7 +151,7 @@ $(function () {
     });
 
     var builder = new HtmlBuilder({});
-    var builder2 = new HtmlBuilder({});
+    //var builder2 = new HtmlBuilder({});
     var debugBuilder = new DebugBuilder({});
     var cssbuilder = new CSSBuilder({});
     var reactComponentBuilder = new ReactComponentBuilder({});
@@ -127,7 +160,7 @@ $(function () {
       {}
     );
     var compiler2 = new Compiler([builder], {});
-    var compiler3 = new Compiler([builder2], {});
+    //var compiler3 = new Compiler([builder2], {});
 
     //-ここからDemo用処理----------------------------------
     var parseData = parseHtml(data.source.model.getValue().trim());
@@ -155,14 +188,14 @@ $(function () {
       var addpoint = headElement.getElementsByTagName("script")[0];
       {
         var newElement = headElement.createElement("script");
-        var child = newElement.createTextNode(reactRootParser.getResult());
+        var child = newElement.createTextNode(reactRootParser.getResult()+"\n//# sourceURL=app.js");
         newElement.appendChild(child);
         headElement.insertBefore(newElement, addpoint);
         addpoint = newElement;
       }
       {
         var newElement = headElement.createElement("script");
-        var child = newElement.createTextNode(webComponentParser.getResult());
+        var child = newElement.createTextNode(webComponentParser.getResult()+"\n//# sourceURL=Component.js");
         newElement.appendChild(child);
         headElement.insertBefore(newElement, addpoint);
         addpoint = newElement;
@@ -220,7 +253,7 @@ $(function () {
   );
 };
 
-$(function() {
+$(function () {
   /* render initial component */
   render();
 });
@@ -230,10 +263,10 @@ $(function() {
       }
     }, this);
     compiler2.compile(parseData.children); //jsonオブジェクトを各種コードに変換します
-    compiler3.compile(bodyElements[0].children); //jsonオブジェクトを各種コードに変換します
+    //compiler3.compile(bodyElements[0].children); //jsonオブジェクトを各種コードに変換します
     data.html.model.setValue(builder.getNodes());
     // iframe内のコンテンツのdocumentオブジェクト追加
-    $("#child-frame").attr("srcdoc", builder.getNodes());
+    //$("#child-frame").attr("srcdoc", builder.getNodes());
 
 /*
     var iframehead = document.getElementById("child-frame").contentDocument.head;
@@ -253,19 +286,35 @@ $(function() {
 */
 //document.getElementById("child-frame").contentDocument.innerHTML = builder.getNodes();
 
+    // iframe内のコンテンツを更新
+    $("#child-frame").attr("srcdoc", "");
+    //$("#child-frame").attr("src", "./blank.html");
+    var frame = document.getElementById("child-frame");
+    frame.src = "./blank.html";
+    frame.onload = function(){
+      frame.onload=function(){};
+      frame.contentDocument.open();
+      frame.contentDocument.write(builder.getNodes());
+      frame.contentDocument.close();
+      $.UIkit.notify("compile..", {status:'success',timeout : 1000});
+    }
   }
 
   $("#run").on("click", function (event) {
     compile();
   });
   
-  $(document).keydown(function(e) {
-      switch (e.keyCode) {
-          case 120:
-          //F9 key
-              compile();;
-              break;
+  $(window).keydown(function(e) {
+    if(e.keyCode === 120){
+        compile();
+        return false;
       }
+    if(e.ctrlKey){
+      if(e.keyCode === 83){
+        saveDraft(data.source.model.getValue());
+              return false;
+      }
+    }
   });
   
 });

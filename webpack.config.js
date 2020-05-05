@@ -49,6 +49,10 @@ module.exports = {
             {
             from: 'css/*.css',
             to: dist
+            },
+            {
+            from: 'html/blank.html',
+            to: dist
             }
         ],
         { copyUnmodified: true }

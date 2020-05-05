@@ -4,10 +4,10 @@
   <meta charset='UTF-8'>
   <title>AHTML</title>
   <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.12.0/css/uikit.min.css">
+  <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.12.0/css/components/notify.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
 <nav class="tm-navbar uk-navbar uk-navbar-attached">
   <div class="uk-container uk-container-center">
     <ul class="uk-navbar-nav uk-hidden-small">
@@ -21,6 +21,7 @@
           <a ><i class="uk-icon-folder-open"></i>Load Sample<i class="uk-icon-caret-down"></i></a>
           <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom" aria-hidden="true" tabindex="" style="top: 40px; left: 0px;">
             <ul class="uk-nav uk-nav-navbar">
+              <li><a id="test0" class="samples" data-url="">localStorage</a></li>
               <li><a id="test1" class="samples" data-url="https://codepen.io/nojaja/pen/mmYdwe.html">Test1 redux sample</a></li>
               <li><a id="test2" class="samples" data-url="https://codepen.io/nojaja/pen/YVbzRw.html">Test2 uikit-sortable sample</a></li>
               <li><a id="test3" class="samples" data-url="https://codepen.io/nojaja/pen/ZKNJgG.html">Test3 component sample</a></li>
@@ -28,6 +29,11 @@
               <li><a id="test5" class="samples" data-url="https://codepen.io/nojaja/pen/OgNgyy.html">Test5 uikit component sample</a></li>
               <li><a id="test6" class="samples" data-url="https://codepen.io/nojaja/pen/weGqej.html">Test6 semantic-ui sample</a></li>
               <li><a id="test7" class="samples" data-url="https://codepen.io/nojaja/pen/BZKxQJ.html">Test7 Bootstrap v4 sample</a></li>
+              <li><a id="test8" class="samples" data-url="https://codepen.io/nojaja/pen/xrORgq.html">Test8 React Routing v4 sample</a></li>
+              <li><a id="test9" class="samples" data-url="https://codepen.io/nojaja/pen/yXVNKm.html">Test9 w3c sample#2</a></li>
+              <li><a id="test10" class="samples" data-url="./sample/uikit_with_react-router_v4.html">Test10 uikit_with_react-router_v4</a></li>
+              <li><a id="test11" class="samples" data-url="./sample/w3c_my-dashboard.html">Test11 w3c sample#3 dashboard</a></li>
+
             </ul>
           </div>
         </li>
@@ -58,18 +64,18 @@
   <div class="uk-width-medium-1-2">
     <div class="uk-panel">
       <h3 class="uk-panel-title">Preview</h3>
-      <iframe id="child-frame" class="uk-block editor" ></iframe>
+      <iframe id="child-frame" class="uk-block editor" src="./blank.html"></iframe>
     </div>
   </div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-migrate-3.0.0.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.12.0/js/uikit.min.js"></script>
-<script src="https://nojaja.github.io/node-htmlcompiler/CSSOM.js"></script>
 <script src="https://codepen.io/nojaja/pen/GjzRga.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/nojaja/node-htmlcompiler@b58ba632195d25e1f5180a1191971f4b1c3021f7/lib/htmlcompiler.js"></script>
 
+<script src="https://rawgit.com/nojaja/node-htmlcompiler/v1.0.2/lib/htmlcompiler.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.12.0/js/uikit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.12.0/js/components/notify.min.js"></script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
