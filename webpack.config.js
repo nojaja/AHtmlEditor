@@ -53,6 +53,10 @@ module.exports = {
             {
             from: 'html/blank.html',
             to: dist
+            },
+            {
+            from: 'sample/*.html',
+            to: dist
             }
         ],
         { copyUnmodified: true }
