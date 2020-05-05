@@ -18,10 +18,10 @@ module.exports = {
     main: './js/index.js',
   },
   output: {
-    filename: 'js/bundle.js',
+    filename: './js/bundle.js',
     sourceMapFilename: '[name].map',
     path: dist,
-    publicPath:"/"
+    publicPath:""
   },
   module: {
     rules: [{
