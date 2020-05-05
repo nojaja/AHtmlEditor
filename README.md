@@ -2,6 +2,7 @@
 
 # AHtmlEditor
 AHtml→ReactComponent Editor
+[Live Demo](https://nojaja.github.io/AHtmlEditor/)
 
 htmlparser.js + htmlcompiler.jsによるWebcomponentのトラインスパイル
    
@@ -11,7 +12,7 @@ htmlparser.js + htmlcompiler.jsによるWebcomponentのトラインスパイル
 >   https://rawgit.com/nojaja/node-htmlcompiler/v1.0.1/lib/htmlcompiler.js
   
 
-# 
+# reference
 [WebComponent→ReactComponent](https://codepen.io/nojaja/pen/jmVgLN)
 create 2018/10/09 22:27:30 UTC
 
