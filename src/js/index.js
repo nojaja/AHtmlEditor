@@ -1,7 +1,8 @@
 "use strict";
 import * as monaco from 'monaco-editor'
 import LocalStorage from './fs/localstorage.js'
-import AHtmlCompiler from './compiler/ahtmlcompiler.js'
+import SiteStorage from './fs/sitestorage.js'
+import BuilderLogic from './builderlogic.js'
 
 var editor = null;
 var data = {
@@ -27,7 +28,8 @@ var data = {
   }
 };
 var localstorage = new LocalStorage();
-var aHtmlCompiler = new AHtmlCompiler();
+var sitestorage = new SiteStorage();
+var builderLogic = new BuilderLogic();
 
 /* タブ切り替え処理 */
 function changeTab(editor, desiredModelId) {
@@ -51,31 +53,53 @@ $("#edittab > li").on("click", (event) => {
 });
 
 // iframe内のコンテンツを更新
-function changeSrc(url, cb) {
+function refreshView (content) {
     // iframe内のコンテンツを更新
   $("#child-frame").attr("srcdoc", "");
   //$("#child-frame").attr("src", "./blank.html");
   var frame = document.getElementById("child-frame");
-  frame.onload = function(){};
+  if(content){ 
+    frame.src = "./blank.html";
+    frame.onload = function(){
+        frame.onload=function(){};
+        frame.contentDocument.open();
+        frame.contentDocument.write(content);
+        frame.contentDocument.close();
+        $.UIkit.notify("compile..", {status:'success',timeout : 1000});
+    }
+  } else {
+    frame.onload = function(){};
+  }
+}
 
+//プロジェクトファイルの読み込み
+function loadProject (url, cb) {
+  $.UIkit.notify("load..", { status: 'success', timeout: 1000 });
+  //iframeの初期化
+  refreshView();
+  //localから取得
   if(!url){
     let doc = localstorage.loadDraft()
     if (doc){
-      data.source.model.setValue(localDraft());
+      data.source.model.setValue(doc);
       //$("#child-frame").attr("src", "./blank.html");
       return (cb)? cb() : true;
     }else{
       url = $("#test5").attr("data-url");
     }
   }
-  $.ajax({
-    url: url,
-    dataType: "html"
-  }).done(function (d) {
-    //editor.setValue(d);
-    data.source.model.setValue(d);
-      return (cb)? cb() : true;
-  });
+  sitestorage.loadDraft(null, url, (source) => {
+    data.source.model.setValue(source);
+    return (cb)? cb() : true;
+  })
+}
+
+function compileAll () {
+    $.UIkit.notify("compile..", {status:'success',timeout : 1000})
+    builderLogic.compileAll(data, () => {
+        $.UIkit.notify("success..", {status:'success',timeout : 1000});
+        refreshView(data.html.model.getValue());
+    })
 }
 
 class DebugBuilder extends Builder {
@@ -111,23 +135,22 @@ $(document).ready(() => {
     model: data.source.model
   });
   let url = arg["q"] ? arg["q"] : "";
-  changeSrc(url, function () {
-    aHtmlCompiler.compile(data)
+  //プロジェクト取得
+  loadProject(url, () => {
+    compileAll();
   });
 
   $("#run").on("click", (event) => {
-    aHtmlCompiler.compile(data)
+    compileAll();
   });
 
   $(".samples").on("click", (event) => {
-    changeSrc($(event.currentTarget).attr("data-url"),() => {
-      $.UIkit.notify("load..", {status:'success',timeout : 1000});
-    });
+    loadProject($(event.currentTarget).attr("data-url"),() => {})
   });
   
   $(window).keydown( (e) => {
     if(e.keyCode === 120){
-        aHtmlCompiler.compile(data)
+        compileAll();
         return false;
       }
     if(e.ctrlKey){

@@ -9,7 +9,7 @@ const WriteFilePlugin = require('write-file-webpack-plugin')
 
 module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'development' : 'production',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   devServer: {
     disableHostCheck: true,
     contentBase: dist,

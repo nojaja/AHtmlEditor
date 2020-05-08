@@ -138,39 +138,6 @@ export class AHtmlCompiler {
         compiler2.compile(parseData.children); //jsonオブジェクトを各種コードに変換します
         // compiler3.compile(bodyElements[0].children); //jsonオブジェクトを各種コードに変換します
         data.html.model.setValue(builder.getNodes());
-        // iframe内のコンテンツのdocumentオブジェクト追加
-        // $("#child-frame").attr("srcdoc", builder.getNodes());
-
-        /*
-        var iframehead = document.getElementById("child-frame").contentDocument.head;
-        {
-        var newElement = document.createElement("script");
-            newElement.type = "text/javascript";
-            newElement.innerHTML  = reactRootParser.getResult();
-            iframehead.appendChild(newElement);
-        }
-        {
-        var newElement = document.createElement("script");
-            newElement.type = "text/javascript";
-            newElement.innerHTML  = webComponentParser.getResult();
-            iframehead.appendChild(newElement);
-        }
-        // document.getElementById("child-frame").contentDocument.body.innerHTML = builder2.getNodes();
-        */
-        // document.getElementById("child-frame").contentDocument.innerHTML = builder.getNodes();
-
-        // iframe内のコンテンツを更新
-        $("#child-frame").attr("srcdoc", "");
-        //$("#child-frame").attr("src", "./blank.html");
-        var frame = document.getElementById("child-frame");
-        frame.src = "./blank.html";
-        frame.onload = function(){
-            frame.onload=function(){};
-            frame.contentDocument.open();
-            frame.contentDocument.write(builder.getNodes());
-            frame.contentDocument.close();
-            $.UIkit.notify("compile..", {status:'success',timeout : 1000});
-        }
     }
 
     stringify(str) {
