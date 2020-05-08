@@ -8,10 +8,12 @@ const CopyFilePlugin = require('copy-webpack-plugin')
 const WriteFilePlugin = require('write-file-webpack-plugin')
 
 module.exports = {
-  mode: 'development',
+  mode: process.env.NODE_ENV === 'production' ? 'development' : 'production',
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: dist
+    disableHostCheck: true,
+    contentBase: dist,
+    public: process.env.URL || ''
   },
   context: src,
   entry: {
@@ -19,7 +21,8 @@ module.exports = {
   },
   output: {
     filename: './js/bundle.js',
-    sourceMapFilename: '[name].map',
+    sourceMapFilename: './map/[id].[chunkhash].js.map',
+    chunkFilename: './chunk/[id].[chunkhash].js',
     path: dist,
     publicPath:""
   },
