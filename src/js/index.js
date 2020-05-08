@@ -24,11 +24,13 @@ var data = {
     state: null
   }
 };
-function changeTab(editor, desiredModelId) {
-  var currentState = editor.saveViewState();
-  var currentModel = editor.getModel();
 
-  for (var key in data) {
+/* タブ切り替え処理 */
+function changeTab(editor, desiredModelId) {
+  let currentState = editor.saveViewState();
+  let currentModel = editor.getModel();
+
+  for (let key in data) {
     if (currentModel === data[key].model) {
       data[key].state = currentState;
     }
@@ -39,11 +41,14 @@ function changeTab(editor, desiredModelId) {
   editor.focus();
 }
 
-$("#edittab > li").on("click", function (event) {
-  changeTab(editor, $(this).attr("id"));
+$("#edittab > li").on("click", (event) => {
+  //タブの切替
+  changeTab(editor, $(event.currentTarget).attr("id"));
 });
 
+// iframe内のコンテンツを更新
 function changeSrc(url, cb) {
+    // iframe内のコンテンツを更新
   $("#child-frame").attr("srcdoc", "");
   //$("#child-frame").attr("src", "./blank.html");
   var frame = document.getElementById("child-frame");
@@ -54,7 +59,7 @@ function changeSrc(url, cb) {
     if (doc){
       data.source.model.setValue(localDraft());
       //$("#child-frame").attr("src", "./blank.html");
-      return (cb)?cb():true;
+      return (cb)? cb() : true;
     }else{
       url = $("#test5").attr("data-url");
     }
@@ -68,26 +73,20 @@ function changeSrc(url, cb) {
       return (cb)? cb() : true;
   });
 }
-$(".samples").on("click", function (event) {
-  changeSrc($(this).attr("data-url"),function () {
-    $.UIkit.notify("load..", {status:'success',timeout : 1000});
-  });
-});
 
-
-function saveDraft(source) {
+function saveDraft (source) {
   // ローカルストレージに最新の状態を保存
 
-  var name = 'draft'+location.pathname.replace(/\//g, '.');
-
+  const name = 'draft'+location.pathname.replace(/\//g, '.');
   localStorage.setItem(name, JSON.stringify(source));
   console.log("draft:" + JSON.stringify(source));
   $.UIkit.notify("save..", {status:'success',timeout : 1000});
 }
-function localDraft() {
+
+function localDraft () {
   // ページが読み込まれたら、ローカルストレージから状態を読み込む
-  var name = 'draft'+location.pathname.replace(/\//g, '.');
-  var source = JSON.parse(localStorage.getItem(name)) || null;
+  const name = 'draft'+location.pathname.replace(/\//g, '.');
+  const source = JSON.parse(localStorage.getItem(name)) || null;
   console.log("source:" + JSON.stringify(source));
   return source;
 }
@@ -122,10 +121,10 @@ for (var i = 0; pair[i]; i++) {
   arg[kv[0]] = kv[1];
 }
 
-var editorContainer = document.getElementById("container");
+const editorContainer = document.getElementById("container");
 
 //View///////////////////////////////////////////////////
-$(function () {
+$(document).ready(() => {
   data.source.model = monaco.editor.createModel("", "html");
   data.dom.model = monaco.editor.createModel("", "json");
   data.component.model = monaco.editor.createModel("", "javascript");
@@ -136,26 +135,26 @@ $(function () {
     automaticLayout: true,
     model: data.source.model
   });
-  var url = arg["q"] ? arg["q"] : "";
+  let url = arg["q"] ? arg["q"] : "";
   changeSrc(url, function () {
     compile();
   });
 
-  function compile() {
-    var webComponentParser = new WebComponentParser({
+  function compile () {
+    let webComponentParser = new WebComponentParser({
       builder: ReactComponentBuilder
     });
 
-    var reactRootParser = new ReactRootComponentBuilder({
+    let reactRootParser = new ReactRootComponentBuilder({
       builder: ReactComponentBuilder
     });
 
-    var builder = new HtmlBuilder({});
-    //var builder2 = new HtmlBuilder({});
-    var debugBuilder = new DebugBuilder({});
-    var cssbuilder = new CSSBuilder({});
-    var reactComponentBuilder = new ReactComponentBuilder({});
-    var compiler1 = new Compiler(
+    let builder = new HtmlBuilder({});
+    //let builder2 = new HtmlBuilder({});
+    let debugBuilder = new DebugBuilder({});
+    let cssbuilder = new CSSBuilder({});
+    let reactComponentBuilder = new ReactComponentBuilder({});
+    let compiler1 = new Compiler(
       [cssbuilder, webComponentParser, reactRootParser],
       {}
     );
@@ -163,7 +162,7 @@ $(function () {
     //var compiler3 = new Compiler([builder2], {});
 
     //-ここからDemo用処理----------------------------------
-    var parseData = parseHtml(data.source.model.getValue().trim());
+    let parseData = parseHtml(data.source.model.getValue().trim());
     data.dom.model.setValue(stringify(parseData));
     compiler1.compile(parseData); //jsonオブジェクトを各種コードに変換します
 
@@ -176,32 +175,32 @@ $(function () {
     data.component.model.setValue(webComponentParser.getResult());
     data.app.model.setValue(reactRootParser.getResult());
 
-    var bodyElements = parseData.getElementsByTagName("body");
+    let bodyElements = parseData.getElementsByTagName("body");
     if (parseData.getElementsByTagName("head").length == 0) {
-      var $html = parseData.getElementsByTagName("html");
-      var newElement = $html[0].createElement("head");
+      let $html = parseData.getElementsByTagName("html");
+      let newElement = $html[0].createElement("head");
       $html[0].insertBefore(newElement, bodyElements[0]);
     }
-    var headElements = parseData.getElementsByTagName("head");
+    let headElements = parseData.getElementsByTagName("head");
     headElements.forEach(function (headElement) {
       //head配下に追加
-      var addpoint = headElement.getElementsByTagName("script")[0];
+      let addpoint = headElement.getElementsByTagName("script")[0];
       {
-        var newElement = headElement.createElement("script");
-        var child = newElement.createTextNode(reactRootParser.getResult()+"\n//# sourceURL=app.js");
+        let newElement = headElement.createElement("script");
+        let child = newElement.createTextNode(reactRootParser.getResult()+"\n//# sourceURL=app.js");
         newElement.appendChild(child);
         headElement.insertBefore(newElement, addpoint);
         addpoint = newElement;
       }
       {
-        var newElement = headElement.createElement("script");
-        var child = newElement.createTextNode(webComponentParser.getResult()+"\n//# sourceURL=Component.js");
+        let newElement = headElement.createElement("script");
+        let child = newElement.createTextNode(webComponentParser.getResult()+"\n//# sourceURL=Component.js");
         newElement.appendChild(child);
         headElement.insertBefore(newElement, addpoint);
         addpoint = newElement;
       }
       {
-        var newElement = headElement.createElement("script");
+        let newElement = headElement.createElement("script");
         newElement.attributes = {
           src: [
             {
@@ -214,7 +213,7 @@ $(function () {
         addpoint = newElement;
       }
       {
-        var newElement = headElement.createElement("script");
+        let newElement = headElement.createElement("script");
         newElement.attributes = {
           src: [
             {
@@ -227,7 +226,7 @@ $(function () {
         addpoint = newElement;
       }
       {
-        var newElement = headElement.createElement("script");
+        let newElement = headElement.createElement("script");
         newElement.attributes = {
           src: [
             {
@@ -244,8 +243,8 @@ $(function () {
 
     bodyElements.forEach(function (bodyElement) {
       {
-        var newElement = bodyElement.createElement("script");
-        var child = newElement.createTextNode(`
+        let newElement = bodyElement.createElement("script");
+        let child = newElement.createTextNode(`
  var render = function render() {
   ReactDOM.render(
     React.createElement(App, null),
@@ -300,11 +299,17 @@ $(function () {
     }
   }
 
-  $("#run").on("click", function (event) {
+  $("#run").on("click", (event) => {
     compile();
   });
+
+  $(".samples").on("click", (event) => {
+    changeSrc($(event.currentTarget).attr("data-url"),() => {
+      $.UIkit.notify("load..", {status:'success',timeout : 1000});
+    });
+  });
   
-  $(window).keydown(function(e) {
+  $(window).keydown( (e) => {
     if(e.keyCode === 120){
         compile();
         return false;
@@ -312,11 +317,10 @@ $(function () {
     if(e.ctrlKey){
       if(e.keyCode === 83){
         saveDraft(data.source.model.getValue());
-              return false;
+        return false;
       }
     }
   });
-  
 });
 
 function stringify(str) {
